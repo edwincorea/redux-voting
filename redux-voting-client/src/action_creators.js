@@ -1,3 +1,10 @@
+export const setClientId = (clientId) => {
+  return {
+    type: 'SET_CLIENT_ID',
+    clientId
+  };
+};
+
 export const setState = (state) => {
   return {
     type: 'SET_STATE',

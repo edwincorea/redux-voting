@@ -1,3 +1,4 @@
+import objectAssign from 'object-assign';
 
 //A Redux middleware is a function that gets invoked when an action is dispatched, 
 //before the action hits the reducer and the store itself.
@@ -9,7 +10,8 @@
 export default socket => store => next => action => {
     //console.log('in middleware', action);
     if (action.meta && action.meta.remote) {
-      socket.emit('action', action);
+      const clientId = store.getState().get('clientId');
+      socket.emit('action', objectAssign({}, action, {clientId}));
     }
     return next(action);
 }

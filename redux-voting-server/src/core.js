@@ -2,7 +2,7 @@ import {List, Map} from 'immutable';
 
 export const INITIAL_STATE = Map();
 
-function getWinners(vote) {
+const getWinners = (vote) => {
   if (!vote) return [];
   const [a, b] = vote.get('pair');
   const aVotes = vote.getIn(['tally', a], 0);
@@ -10,7 +10,7 @@ function getWinners(vote) {
   if      (aVotes > bVotes)  return [a];
   else if (aVotes < bVotes)  return [b];
   else                       return [a, b];
-}
+};
 
 export const setEntries = (state, entries) => {
   return state.set('entries', List(entries));
@@ -35,15 +35,31 @@ export const next = (state) => {
   }
 };
 
-export const vote = (voteState, entry) => {
-  if (voteState.get('pair').includes(entry)) {
-    return voteState.updateIn(
-      ['tally', entry],
-      0,
-      tally => tally + 1
-    );
+const removePreviousVote = (voteState, voter) => {
+  const previousVote = voteState.getIn(['votes', voter]);
+  if (previousVote) {
+    return voteState.updateIn(['tally', previousVote], t => t - 1)
+                    .removeIn(['votes', voter]);
   } 
   else {
     return voteState;
   }
+};
+ 
+const addVote = (voteState, entry, voter) => {
+  if (voteState.get('pair').includes(entry)) {
+    return voteState.updateIn(['tally', entry], 0, t => t + 1)
+                    .setIn(['votes', voter], entry);
+  } 
+  else {
+    return voteState;
+  }
+};
+
+export const vote = (voteState, entry, voter) => {
+  return addVote(
+    removePreviousVote(voteState, voter),
+    entry,
+    voter
+  );
 };
