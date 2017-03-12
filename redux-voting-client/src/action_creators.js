@@ -1,18 +1,21 @@
-export const setClientId = (clientId) => {
+export const setClientId = (clientId) => 
+{
   return {
     type: 'SET_CLIENT_ID',
     clientId
   };
 };
 
-export const setState = (state) => {
+export const setState = (state) => 
+{
   return {
     type: 'SET_STATE',
     state
   };
 };
 
-export const vote = (entry) => {
+export const vote = (entry) => 
+{
   return {
     meta: {remote: true},
     type: 'VOTE',
@@ -20,9 +23,18 @@ export const vote = (entry) => {
   };
 };
 
-export const next = () => {
+export const next = () => 
+{
   return {
     meta: {remote: true},
     type: 'NEXT'
   };
+};
+
+export const restart = () => 
+{
+   return {
+     meta: {remote: true},
+     type: 'RESTART'
+   };
 };

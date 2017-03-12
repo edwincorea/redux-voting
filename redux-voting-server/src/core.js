@@ -2,32 +2,40 @@ import {List, Map} from 'immutable';
 
 export const INITIAL_STATE = Map();
 
-const getWinners = (vote) => {
+const getWinners = (vote) => 
+{
   if (!vote) return [];
-  const [a, b] = vote.get('pair');
-  const aVotes = vote.getIn(['tally', a], 0);
-  const bVotes = vote.getIn(['tally', b], 0);
-  if      (aVotes > bVotes)  return [a];
-  else if (aVotes < bVotes)  return [b];
-  else                       return [a, b];
+    const [a, b] = vote.get('pair');
+    const aVotes = vote.getIn(['tally', a], 0);
+    const bVotes = vote.getIn(['tally', b], 0);
+
+    if      (aVotes > bVotes)  return [a];
+    else if (aVotes < bVotes)  return [b];
+    else                       return [a, b];
 };
 
-export const setEntries = (state, entries) => {
-  return state.set('entries', List(entries));
+export const setEntries = (state, entries) => 
+{
+  const list = List(entries);
+  return state.set('entries', list)
+              .set('initialEntries', list);
 };
 
-export const next = (state) => {
+export const next = (state, round = state.getIn(['vote', 'round'], 0)) => 
+{
   const entries = state.get('entries')
                        .concat(getWinners(state.get('vote')));
-  if (entries.size === 1) {
+  if (entries.size === 1) 
+  {
     return state.remove('vote')
                 .remove('entries')
                 .set('winner', entries.first());
   } 
-  else {  
+  else 
+  {  
     return state.merge({
       vote: Map({
-        round: state.getIn(['vote', 'round'], 0) + 1,
+        round: round + 1,
         pair: entries.take(2)
       }),
       entries: entries.skip(2)
@@ -35,28 +43,46 @@ export const next = (state) => {
   }
 };
 
-const removePreviousVote = (voteState, voter) => {
+export const restart = (state) =>
+{
+  const round = state.getIn(['vote', 'round'], 0);
+  return next(
+    state.set('entries', state.get('initialEntries'))
+         .remove('vote')
+         .remove('winner'),
+    round
+  );
+};
+
+const removePreviousVote = (voteState, voter) => 
+{
   const previousVote = voteState.getIn(['votes', voter]);
-  if (previousVote) {
+  if (previousVote) 
+  {
     return voteState.updateIn(['tally', previousVote], t => t - 1)
                     .removeIn(['votes', voter]);
   } 
-  else {
+  else 
+  {
     return voteState;
   }
 };
  
-const addVote = (voteState, entry, voter) => {
-  if (voteState.get('pair').includes(entry)) {
+const addVote = (voteState, entry, voter) => 
+{
+  if (voteState.get('pair').includes(entry)) 
+  {
     return voteState.updateIn(['tally', entry], 0, t => t + 1)
                     .setIn(['votes', voter], entry);
   } 
-  else {
+  else 
+  {
     return voteState;
   }
 };
 
-export const vote = (voteState, entry, voter) => {
+export const vote = (voteState, entry, voter) => 
+{
   return addVote(
     removePreviousVote(voteState, voter),
     entry,
