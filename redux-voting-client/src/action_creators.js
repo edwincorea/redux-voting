@@ -6,6 +6,15 @@ export const setClientId = (clientId) =>
   };
 };
 
+export const setConnectionState = (state, connected) => 
+{
+   return {
+     type: 'SET_CONNECTION_STATE',
+     state,
+     connected
+   };
+};
+
 export const setState = (state) => 
 {
   return {
