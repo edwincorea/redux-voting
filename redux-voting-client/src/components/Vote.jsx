@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class Vote extends Component {    
   constructor(props){
       super(props);      
+      this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
       this._getPair = this._getPair.bind(this);
       this._isDisabled = this._isDisabled.bind(this);
