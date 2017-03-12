@@ -12,29 +12,30 @@ function getWinners(vote) {
   else                       return [a, b];
 }
 
-export function setEntries(state, entries) {
+export const setEntries = (state, entries) => {
   return state.set('entries', List(entries));
-}
+};
 
-export function next(state) {
+export const next = (state) => {
   const entries = state.get('entries')
                        .concat(getWinners(state.get('vote')));
-if (entries.size === 1) {
+  if (entries.size === 1) {
     return state.remove('vote')
                 .remove('entries')
                 .set('winner', entries.first());
-  } else {  
+  } 
+  else {  
     return state.merge({
       vote: Map({pair: entries.take(2)}),
       entries: entries.skip(2)
     });
   }
-}
+};
 
-export function vote(voteState, entry) {
+export const vote = (voteState, entry) => {
   return voteState.updateIn(
     ['tally', entry],
     0,
     tally => tally + 1
   );
-}
+};

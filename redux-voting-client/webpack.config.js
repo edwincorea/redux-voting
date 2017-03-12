@@ -14,7 +14,7 @@ module.exports = {
     },
     {
       test: /\.css$/,
-      loader: 'style!css!autoprefixer?browsers=last 2 versions'
+      loader: 'style-loader!css-loader!autoprefixer-loader?browsers=last 2 versions'
     }]
   },
   resolve: {

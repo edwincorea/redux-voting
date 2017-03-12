@@ -3,6 +3,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {connect} from 'react-redux';
 
 import Winner from './Winner';
+import * as actionCreators from '../action_creators';
+
+export const VOTE_WIDTH_PERCENT = 8;
 
 export class Results extends Component {    
   constructor(props){
@@ -11,7 +14,7 @@ export class Results extends Component {
 
       this._getPair = this._getPair.bind(this);
       this._getVotes = this._getVotes.bind(this);
-      console.log(this.props);
+      this._getVotesBlockWidth = this._getVotesBlockWidth.bind(this);
   }
 
   _getPair() {
@@ -25,6 +28,10 @@ export class Results extends Component {
     return 0;
   }  
 
+  _getVotesBlockWidth(entry) {
+    return (this._getVotes(entry) * VOTE_WIDTH_PERCENT) + '%';
+  }
+
   render() {
     return this.props.winner 
       ? <Winner ref="winner" winner={this.props.winner} /> 
@@ -33,6 +40,11 @@ export class Results extends Component {
             {this._getPair().map(entry =>
               <div key={entry} className="entry">
                 <h1>{entry}</h1>
+                <div className="voteVisualization">
+                  <div className="votesBlock"
+                      style={{width: this._getVotesBlockWidth(entry)}}>
+                  </div>
+              </div>                
                 <div className="voteCount">
                   {this._getVotes(entry)}
                 </div>          
@@ -59,4 +71,4 @@ function mapStateToProps(state) {
   }
 }
 
-export const ResultsContainer = connect(mapStateToProps)(Results);
+export const ResultsContainer = connect(mapStateToProps, actionCreators)(Results);
